@@ -74,7 +74,8 @@ begin
                   state <= fetch;
                end if;
             when op_alu | ldi =>
-               state <= fetch;
+               fetched  <=  '1';
+               state <= decode;
             when jump =>
                state <= fetch;
             when stop =>
@@ -167,11 +168,11 @@ begin
       end if;
    end process;
    
-   wIR <= '1' when state = fetch else '0';
+   wIR <= '1' when state = fetch or state=op_alu or state=ldi else '0';
    
    process( state, Z, N )is
    begin
-      if( state = fetch )then
+      if( state = fetch or state=op_alu or state=ldi)then
          wPC      <= '1';
          doBranch <= '0';
       elsif( state = jump ) then
