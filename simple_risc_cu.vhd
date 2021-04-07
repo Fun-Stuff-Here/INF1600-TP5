@@ -67,16 +67,14 @@ begin
                end case;
             when read_mem =>
                if( rmem_confirmed = '1' ) then
-                  state <= decode;
-                  fetched  <=  '1';
+                  state <= fetch;
                end if;
             when write_mem =>
                if( wmem_confirmed = '1' ) then
                   state <= fetch;
                end if;
             when op_alu | ldi =>
-               fetched  <=  '1';
-               state <= decode;
+               state <= fetch;
             when jump =>
                state <= fetch;
             when stop =>
@@ -169,11 +167,11 @@ begin
       end if;
    end process;
    
-   wIR <= '1' when state = fetch or state=op_alu or state=ldi or (state = read_mem and rmem_confirmed = '1' ) else '0';
+   wIR <= '1' when state = fetch  else '0';
    
    process( state, Z, N, rmem_confirmed )is
    begin
-      if( state = fetch or state=op_alu or state=ldi or (state = read_mem and rmem_confirmed = '1' ))then
+      if( state = fetch )then
          wPC      <= '1';
          doBranch <= '0';
       elsif( state = jump ) then
