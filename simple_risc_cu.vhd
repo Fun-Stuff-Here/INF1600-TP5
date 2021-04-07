@@ -42,7 +42,7 @@ begin
    --
    -- *******************************************************************   
    -- A modifier
-   process (clk, rst)
+   process (clk, rst,s_op_rmem)
    begin
       if rst = '1' then
          state    <= start;
@@ -57,22 +57,22 @@ begin
                fetched  <=  '1';
             when decode =>
                case inst is
-                  when inst_alu       => state <= op_alu;
-                  when inst_read_mem  => state <= read_mem;
-                  when inst_write_mem => state <= write_mem;
+                  when inst_alu       => state <= fetch;    --op_alu;
+                  when inst_read_mem  => state <= read_mem;--read_mem;
+                  when inst_write_mem => state <= fetch;--write_mem;
                   when inst_loadi     => state <= ldi;
                   when inst_branch    => state <= jump;
                   when inst_stop      => state <= stop;
                   when others         => state <= stop;
                end case;
             when read_mem =>
-               if( rmem_confirmed = '1' ) then
+               --if( rmem_confirmed = '1' ) then
                   state <= fetch;
-               end if;
+               --end if;
             when write_mem =>
-               if( wmem_confirmed = '1' ) then
+               --if( wmem_confirmed = '1' ) then
                   state <= fetch;
-               end if;
+               --end if;
             when op_alu | ldi =>
                state <= fetch;
             when jump =>
@@ -103,10 +103,10 @@ begin
    --
    -- *******************************************************************
    -- A modifier
-   process( state, rmem_confirmed ) is
+   process( state, s_op_ual, rmem_confirmed ) is
    begin
       wFLAG <= '0';
-      if( state = op_alu ) then
+      if( s_op_ual = '1' ) then
          choixSource <= 0;
          wreg        <= '1';
          wFLAG       <= '1';
