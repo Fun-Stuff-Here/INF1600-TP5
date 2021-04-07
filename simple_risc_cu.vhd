@@ -106,7 +106,7 @@ begin
    process( state, s_op_ual, rmem_confirmed ) is
    begin
       wFLAG <= '0';
-      if( s_op_ual = '1' ) then
+      if( s_op_ual = '1' ) then --state=op_alu
          choixSource <= 0;
          wreg        <= '1';
          wFLAG       <= '1';
